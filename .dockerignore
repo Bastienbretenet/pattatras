@@ -1,0 +1,5 @@
+.git
+**/node_modules
+backend/vendor
+backend/var
+backend/.env.local

@@ -1,0 +1,28 @@
+services:
+  app:
+    build: .
+    image: pattatras:latest
+    user: "${UID:-1000}:${GID:-1000}"
+    volumes:
+      - ./backend:/app
+      # Hors du dossier partagé avec l'hôte : lent sous Windows, et lu à chaque requête.
+      - vendor:/app/vendor
+      - var:/app/var
+    restart: unless-stopped
+
+  front:
+    image: node:22
+    user: node
+    working_dir: /src/frontend
+    command: sh -c "npm install --no-audit --no-fund && npm run dev -- --host"
+    environment:
+      API_URL: http://app:8000
+    ports:
+      - "${PATTATRAS_PORT:-3000}:3000"
+    volumes:
+      - ./frontend:/src/frontend
+    restart: unless-stopped
+
+volumes:
+  vendor:
+  var:
